@@ -8,6 +8,7 @@
     "test": "mocha -t test/"
   },
   "author": "Yin Li",
+  "repository": "git@github.com:lyroyce/popular-cache.git",
   "license": "MIT",
   "readmeFilename": "README.md"
 }
