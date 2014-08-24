@@ -1,0 +1,13 @@
+{
+  "name": "popular-cache",
+  "version": "1.0.10",
+  "description": "An in memory LRU cache with built-in statistics.",
+  "keywords": "cache, simple, storage",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha -t test/"
+  },
+  "author": "Yin Li",
+  "license": "MIT",
+  "readmeFilename": "README.md"
+}
