@@ -2,14 +2,18 @@
 
 An in-memory LRU cache with built-in statistics.
 
+# Install
+
+	npm install popular-cache --save
+
 # Usage
 
 	var pcache = require('popular-cache');
 		cache = pcache({
-			maxSize: 500,			// sets size limit
-			maxAge: 1000 * 60 * 60	// sets age limit in millisecond
+			maxSize: 500,
+			maxAge: 1000 * 60 * 60	// in millisecond
 		}),
-		smallCache = pcache(50);	// or simply sets size limit
+		smallCache = pcache(50);	// or simply sets max size
 
 	// basic usage
 	cache.set("key", "value")
@@ -59,11 +63,11 @@ An in-memory LRU cache with built-in statistics.
 
 - **hits()**
 	
-	- Gets the total hits of the cache.
+	- Gets the total hits.
 
 - **misses()**
 	
-	- Gets the total misses of the cache.
+	- Gets the total misses.
 
 - **recent(function(key, value, hits), [limit])**
 

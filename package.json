@@ -1,8 +1,8 @@
 {
   "name": "popular-cache",
-  "version": "1.0.10",
-  "description": "An in memory LRU cache with built-in statistics.",
-  "keywords": "cache, simple, storage",
+  "version": "1.0.11",
+  "description": "An in-memory LRU cache with built-in statistics.",
+  "keywords": "lru, ttl, cache, memory, storage, statistics, analysis",
   "main": "index.js",
   "scripts": {
     "test": "mocha -t test/"
