@@ -33,11 +33,11 @@ describe('statistics', function(){
 		cache.get('8');
 		// should get value in proper order
 		var expected = [8, 9, 6, 2, 7, 5, 4, 3, 1, 0],
-			expectedHit = [2, 1, 1, 1, 0, 0, 0, 0, 0, 0];
+			expectedHits = [2, 1, 1, 1, 0, 0, 0, 0, 0, 0];
 		var i = 0;
 		cache.recent(function(key, value, hits){
-			assert.equal(value, expected[i]);
-			assert.equal(hits, expectedHit[i]);
+			assert.equal(expected[i], value);
+			assert.equal(expectedHits[i], hits);
 			i++;
 		});
 		assert.equal(10, i);
@@ -61,11 +61,11 @@ describe('statistics', function(){
 		}
 		// should get value in proper order
 		var expected = [6, 1, 2, 8],
-			expectedHit = [61, 61, 60, 50];
+			expectedHits = [61, 61, 60, 50];
 		var i = 0;
 		cache.popular(function(key, value, hits){
-			assert.equal(value, expected[i]);
-			assert.equal(hits, expectedHit[i]);
+			assert.equal(expected[i], value);
+			assert.equal(expectedHits[i], hits);
 			i++;
 		}, 6);
 		assert.equal(4, i);

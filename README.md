@@ -1,12 +1,12 @@
 # Popular Cache
 
-An in-memory LRU cache with built-in statistics.
+An in-memory LRU cache with easy statistics and smart proxy mode.
 
-# Install
+# Installation
 
 	npm install popular-cache --save
 
-# Usage
+# Basic Usage
 
 	var pcache = require('popular-cache');
 		cache = pcache({
@@ -35,6 +35,28 @@ An in-memory LRU cache with built-in statistics.
 		console.log(key + ': ' + hits);
 	}, 10);
 
+# Proxy Mode
+
+Proxy mode is as simple as telling popular-cache what you want and then you just get and get. Cache misses and concurrent requests are handled automatically.
+
+	// some time consuming process like HTTP request
+	var httpRequest = function(key, callback){
+		setTimeout(function(){
+			if(key=='popular-cache') callback('I am popular-cache');
+			else callback('others');
+		}, 1000);
+	}
+	var cache = pcache(50).proxy(httpRequest);
+
+	cache.get('popular-cache', function(value){
+		console.log(value); // I am popular-cache
+	});
+	cache.get('another key', function(value){
+		console.log(value); // others
+	});
+
+The only difference in proxy mode is how the value is returned.
+
 # APIs
 
 - **set(key, value)**
@@ -43,11 +65,15 @@ An in-memory LRU cache with built-in statistics.
 	- Updates the "recently used"-ness of the entry.
 	- Resets the age of the entry.
 
-- **get(key)**
+- **get(key)** (Normal Mode)
 
 	- Gets a value for a given key. Returns null if not found.
 	- Updates the "recently used"-ness of the entry.
-	- Increases the hits of the entry.
+	- Increases the hits of the entry
+
+- **get(key, function(value))** (Proxy Mode)
+
+	- same as `get(key)` except how the value is returned. The callback `function(value)` is required in proxy mode to receive the value.
 
 - **del(key)**
 	

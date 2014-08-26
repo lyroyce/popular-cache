@@ -1,0 +1,118 @@
+var assert = require('assert'),
+	pcache = require('../lib/cache')
+describe('proxy', function(){
+	it('should be able to use proxy', function(done){
+		// some time consuming process like HTTP request
+		var httpRequest = function(key, callback){
+			setTimeout(function(){
+				if(key=='popular-cache') callback('I am popular-cache');
+				else callback('others');
+			}, 10);
+		}
+		var cache = pcache(50).proxy(httpRequest);
+
+		cache.get('popular-cache', function(value){
+			assert.equal('I am popular-cache', value);
+		});
+		cache.get('another key', function(value){
+			assert.equal('others', value);
+			done();
+		});
+	})
+	it('should not use proxy for existing value', function(done){
+		var cache = pcache(10).proxy(function(key, callback){
+			if(key=='key') callback('value');
+		});
+		cache.set('key', 'modified value');
+		cache.get('key', function(value){
+			assert.equal('modified value', value);
+		});
+		cache.del('key');
+		cache.get('key', function(value){
+			assert.equal('value', value);
+			done();
+		});
+	})
+	it('should have statistics for proxy', function(){
+		var cache = pcache(10).proxy(function(key, callback){
+			if(key=='key') callback('value');
+		});
+		cache.set('1', 1);
+		cache.get('1');
+		cache.get('key');
+		cache.get('key');
+		cache.get('2'); // null value will not be cached
+		cache.get('key');
+		assert.equal(2, cache.size());
+		assert.equal(2, cache.misses());
+		assert.equal(3, cache.hits());
+
+		// popular
+		var expectedKeys = ['key', '1'],
+			expectedHits = [2, 1];
+		var i = 0;
+		cache.popular(function(key, value, hits){
+			assert.equal(expectedKeys[i], key);
+			assert.equal(expectedHits[i], hits);
+			i++;
+		});
+		assert.equal(2, i);
+
+		// recent
+		var expectedKeys = ['key', '1'],
+			expectedHits = [2, 1];
+		var i = 0;
+		cache.recent(function(key, value, hits){
+			assert.equal(expectedKeys[i], key);
+			assert.equal(expectedHits[i], hits);
+			i++;
+		});
+		assert.equal(2, i);
+	})
+	it('should only do one proxy call for multiple same requests', function(done){
+		var proxyCalls = 0;
+		var cache = pcache(10).proxy(function(key, callback){
+			// time consuming process
+			setTimeout(function(){
+				callback(++proxyCalls);
+			}, 50);
+		});
+		cache.get('key', function(value){
+			assert.equal(1, value);
+		});
+		cache.get('key', function(value){
+			assert.equal(1, value);
+		});
+		cache.get('another key', function(value){
+			assert.equal(2, value);
+		});
+		cache.get('another key', function(value){
+			assert.equal(2, value);
+		});
+		// Here we should get proxyCalls=1
+		// because the proxy call for 'key' has already been made
+		cache.get('key', function(value){
+			assert.equal(1, value);
+			done();
+		});
+	})
+	it('should use proxy when requested key is expired', function(done){
+		var proxyCalls = 0;
+		var cache = pcache({maxAge: 100}).proxy(function(key, callback){
+			// time consuming process
+			setTimeout(function(){
+				callback(++proxyCalls);
+			}, 50);
+		});
+		cache.set('key', 'value')
+		cache.get('key', function(value){
+			assert.equal('value', value);
+		});
+		setTimeout(function(){
+			cache.get('key', function(value){
+				assert.equal(1, value);
+				done();
+			});
+		},150);
+	})
+})
