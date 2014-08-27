@@ -108,13 +108,22 @@ Note that the value is not returned directly in proxy mode. Instead, it's return
 	- `hits`: the number of hits of the entry.
 	- `limit`: optional, the maximum number of iterations.
 
-- **proxy(function(key, callback(value)))**
+- **proxy(function(key, callback(value), [context]))**
 
-	- Build and return a proxied cache to enter proxy mode.
-	- The proxy function `function(key, callback)` is usually a time consuming process to retrieve the latest value associated with `key`. It will be called automatically on cache misses.
-	- The latest value should be returned to proxy via `callback(value)`.
+	- Build and return a proxied cache.
+	- The proxy function `function(key, callback(value), [context])` will be called automatically on cache misses.
 
-- **get(key, function(value))** (only in proxy mode)
+		`key` and `context` is passed from `get(key, function(value), [context])` directly. `context` is optional and could be anything that is useful for the proxy function.
 
-	- same as `get(key)` except how the value is returned. The callback `function(value)` is required in proxy mode to receive the value.
+			var cache = pcache().proxy(function(key, callback, context){
+				callback(key + ' proxy ' + context);
+			});
+			cache.get('hello', function(value){
+				console.log(value); // hello proxy world
+			}, 'world');
+
+- **get(key, function(value), [context])** (only in proxy mode)
+
+	- Same as `get(key)` except how the value is returned. `function(value)` is required in proxy mode to receive the value.
+	- `context` is only useful on cache misses and will be passed to the proxy function directly. 
 

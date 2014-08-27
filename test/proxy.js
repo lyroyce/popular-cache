@@ -116,4 +116,13 @@ describe('proxy', function(){
 			});
 		},50);
 	})
+	it('should be able to pass in context on get', function(done){
+		var cache = pcache().proxy(function(key, callback, context){
+			callback(key + ' proxy ' + context);
+		});
+		cache.get('hello', function(value){
+			assert.equal('hello proxy world', value);
+			done();
+		}, 'world');
+	})
 })
