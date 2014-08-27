@@ -46,8 +46,9 @@ Proxy mode is as simple as telling popular-cache what you want and then you just
 			else callback('others');
 		}, 1000);
 	}
+	// use the proxied cache returned by proxy()
 	var cache = pcache(50).proxy(httpRequest);
-
+	 
 	cache.get('popular-cache', function(value){
 		console.log(value); // I am popular-cache
 	});
@@ -55,7 +56,7 @@ Proxy mode is as simple as telling popular-cache what you want and then you just
 		console.log(value); // others
 	});
 
-The only difference in proxy mode is how the value is returned.
+Note that the value is not returned directly in proxy mode. Instead, it's returned via callback.
 
 # APIs
 
@@ -70,10 +71,6 @@ The only difference in proxy mode is how the value is returned.
 	- Gets a value for a given key. Returns null if not found.
 	- Updates the "recently used"-ness of the entry.
 	- Increases the hits of the entry
-
-- **get(key, function(value))** (Proxy Mode)
-
-	- same as `get(key)` except how the value is returned. The callback `function(value)` is required in proxy mode to receive the value.
 
 - **del(key)**
 	
@@ -110,3 +107,14 @@ The only difference in proxy mode is how the value is returned.
 	- `value`: the value of the entry.
 	- `hits`: the number of hits of the entry.
 	- `limit`: optional, the maximum number of iterations.
+
+- **proxy(function(key, callback(value)))**
+
+	- Build and return a proxied cache to enter proxy mode.
+	- The proxy function `function(key, callback)` is usually a time consuming process to retrieve the latest value associated with `key`. It will be called automatically on cache misses.
+	- The latest value should be returned to proxy via `callback(value)`.
+
+- **get(key, function(value))** (only in proxy mode)
+
+	- same as `get(key)` except how the value is returned. The callback `function(value)` is required in proxy mode to receive the value.
+
