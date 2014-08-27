@@ -80,7 +80,7 @@ describe('basic', function(){
 		assert.equal(4, cache.get('4'));
 	})
 	it('should support maxAge option', function(done){
-		var cache = pcache({maxAge: 50});
+		var cache = pcache({maxAge: 10});
 		cache.set('1', 1);
 		cache.set('2', 2);
 		cache.set('3', 3);
@@ -97,10 +97,10 @@ describe('basic', function(){
 			assert.equal(null, cache.get('2'));
 			assert.equal(null, cache.get('3'));
 			done();
-		}, 100);
+		}, 20);
 	})
 	it('should clean out-dated cache first when reaching size limit and maxAge is set', function(done){
-		var cache = pcache({maxSize: 3, maxAge: 50});
+		var cache = pcache({maxSize: 3, maxAge: 10});
 		cache.set('1', 1);
 		cache.set('2', 2);
 		cache.set('3', 3);
@@ -112,6 +112,6 @@ describe('basic', function(){
 			assert.equal(null, cache.get('2'));
 			assert.equal(null, cache.get('3'));
 			done();
-		}, 100);
+		}, 20);
 	})
 })

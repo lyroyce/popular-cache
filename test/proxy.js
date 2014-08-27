@@ -75,7 +75,7 @@ describe('proxy', function(){
 			// time consuming process
 			setTimeout(function(){
 				callback(++proxyCalls);
-			}, 50);
+			}, 10);
 		});
 		cache.get('key', function(value){
 			assert.equal(1, value);
@@ -98,21 +98,22 @@ describe('proxy', function(){
 	})
 	it('should use proxy when requested key is expired', function(done){
 		var proxyCalls = 0;
-		var cache = pcache({maxAge: 100}).proxy(function(key, callback){
+		var cache = pcache({maxAge: 20}).proxy(function(key, callback){
 			// time consuming process
 			setTimeout(function(){
 				callback(++proxyCalls);
-			}, 50);
+			}, 10);
 		});
 		cache.set('key', 'value')
 		cache.get('key', function(value){
 			assert.equal('value', value);
 		});
 		setTimeout(function(){
+			// the key should have expired
 			cache.get('key', function(value){
 				assert.equal(1, value);
 				done();
 			});
-		},150);
+		},50);
 	})
 })

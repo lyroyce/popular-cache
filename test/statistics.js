@@ -70,4 +70,23 @@ describe('statistics', function(){
 		}, 6);
 		assert.equal(4, i);
 	})
+	it('should not count out-dated visits as a hit', function(done){
+		var cache = pcache({maxSize: 10, maxAge: 10});
+		cache.set('1', 1);
+		cache.get('1');
+		assert.equal(1, cache.hits());
+		setTimeout(function(){
+			// this is not a hit
+			cache.get('1');
+			cache.get('1');
+			assert.equal(1, cache.size());
+			assert.equal(1, cache.hits());
+			// out-dated item is not removed on get
+			cache.set('1', 2);
+			cache.get('1');
+			assert.equal(1, cache.size());
+			assert.equal(2, cache.hits());
+			done();
+		}, 20);
+	})
 })
