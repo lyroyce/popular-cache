@@ -40,21 +40,25 @@ An in-memory LRU cache with easy statistics and smart proxy mode.
 Proxy mode is as simple as telling popular-cache what you want and then you just get and get. Cache misses and concurrent requests are handled automatically.
 
 	// some time consuming process like HTTP request
-	var httpRequest = function(key, callback){
+	var httpRequest = function(key, callback, context){
 		setTimeout(function(){
-			if(key=='popular-cache') callback('I am popular-cache');
-			else callback('others');
+			callback(key + ' proxy ' + context);
 		}, 1000);
 	}
-	// use the proxied cache returned by proxy()
-	var cache = pcache(50).proxy(httpRequest);
+	// define the proxied cache
+	var cache = pcache(50).proxy(httpRequest)
+		.accept(function(key, value, context){
+			return key.length > 5; 		// don't cache key that is too short
+		});
 	 
-	cache.get('popular-cache', function(value){
-		console.log(value); // I am popular-cache
-	});
-	cache.get('another key', function(value){
-		console.log(value); // others
-	});
+	cache.get('hello', function(value){
+		console.log(value); 		// hello proxy world
+		console.log(cache.size()); 	// 0
+	}, 'world');
+	cache.get('longer key', function(value){
+		console.log(value); 		// longer key proxy anything
+		console.log(cache.size()); 	// 1
+	}, 'anything');
 
 Note that the value is not returned directly in proxy mode. Instead, it's returned via callback.
 
@@ -66,7 +70,7 @@ Note that the value is not returned directly in proxy mode. Instead, it's return
 	- Updates the "recently used"-ness of the entry.
 	- Resets the age of the entry.
 
-- **get(key)** (Normal Mode)
+- **get(key)** (normal Mode)
 
 	- Gets a value for a given key. Returns null if not found.
 	- Updates the "recently used"-ness of the entry.
@@ -94,7 +98,7 @@ Note that the value is not returned directly in proxy mode. Instead, it's return
 
 - **recent(function(key, value, hits), [limit])**
 
-	- Iterate over recent used entries in reverse chronological order.
+	- Iterates over recent used entries in reverse chronological order.
 	- `key`: the key of the entry.
 	- `value`: the value of the entry.
 	- `hits`: the number of hits of the entry.
@@ -102,7 +106,7 @@ Note that the value is not returned directly in proxy mode. Instead, it's return
 
 - **popular(function(key, value, hits), [limit])**
 
-	- Iterate over most popular entries in descending order of hits.
+	- Iterates over most popular entries in descending order of hits.
 	- `key`: the key of the entry.
 	- `value`: the value of the entry.
 	- `hits`: the number of hits of the entry.
@@ -110,20 +114,15 @@ Note that the value is not returned directly in proxy mode. Instead, it's return
 
 - **proxy(function(key, callback(value), [context]))**
 
-	- Build and return a proxied cache.
-	- The proxy function `function(key, callback(value), [context])` will be called automatically on cache misses.
+	- Sets a proxy function and returns the proxied cache.
+	- The proxy function `function(key, callback(value), [context])` will be called when cache misses occur to retrieve the latest value. `key` and `context` is passed from `get(key, function(value), [context])` directly. See the example below.
 
-		`key` and `context` is passed from `get(key, function(value), [context])` directly. `context` is optional and could be anything that is useful for the proxy function.
+- **accept(function(key, value, context))** (proxy mode)
 
-			var cache = pcache().proxy(function(key, callback, context){
-				callback(key + ' proxy ' + context);
-			});
-			cache.get('hello', function(value){
-				console.log(value); // hello proxy world
-			}, 'world');
+	- Sets an acceptance function in proxy mode.
+	- The acceptance function `function(key, value, context)` will be called after the latest value is retrieved to determine whether or not the value should be cached. 
 
-- **get(key, function(value), [context])** (only in proxy mode)
+- **get(key, function(value), [context])** (proxy mode)
 
-	- Same as `get(key)` except how the value is returned. `function(value)` is required in proxy mode to receive the value.
-	- `context` is only useful on cache misses and will be passed to the proxy function directly. 
-
+	- Gets a value for a given key in proxy mode. Note that `function(value)` is required here to receive the value.
+	- `context` is optional and could be anything that is helpful for the proxy function. It will only be passed to the proxy function when cache misses occur. 
