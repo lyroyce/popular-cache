@@ -144,4 +144,28 @@ describe('proxy', function(){
 			}, 'world');
 		}, 'world');
 	})
+	it('should support accept function', function(done){
+		var cache = pcache().proxy(function(key, callback, context){
+			callback(key);
+		}).accept(function(key, value, context){
+			return context != 'dont cache me';
+		});
+		// should set cache
+		cache.get('hello', function(value){
+			assert.equal('hello', value);
+			assert.equal(1, cache.size());
+		}, 'world');
+		// should not set cache
+		cache.get('popular', function(value){
+			assert.equal('popular', value);
+			assert.equal(1, cache.size());
+
+		}, 'dont cache me');
+		// should set cache
+		cache.get('cache', function(value){
+			assert.equal('cache', value);
+			assert.equal(2, cache.size());
+			done();
+		}, '');
+	})
 })
