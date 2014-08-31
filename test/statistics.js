@@ -92,9 +92,15 @@ describe('statistics', function(){
 	})
 	it('should be able to get memory size', function(){
 		var cache = pcache({maxSize: 10, maxAge: 10});
-		for(var i=0; i<10; i++){
-			cache.set(''+i, i);
+		for(var i=0; i<5; i++){
+			cache.set(i, i);
 		}
-		assert.equal(1020, cache.memory());
+		assert.equal(540, cache.memory());
+		assert.equal('540B', cache.memory(true));
+		for(var i=0; i<5; i++){
+			cache.set(10 + i , i);
+		}
+		assert.equal(1090, cache.memory());
+		assert.equal('1.064K', cache.memory(true));
 	})
 })
