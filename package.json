@@ -1,6 +1,6 @@
 {
   "name": "popular-cache",
-  "version": "1.1.6",
+  "version": "1.1.7",
   "description": "An in-memory LRU cache with built-in statistics and proxy mode.",
   "keywords": "lru, ttl, cache, memory, storage, statistics, analysis, proxy",
   "main": "index.js",

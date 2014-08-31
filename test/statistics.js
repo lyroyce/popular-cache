@@ -90,4 +90,11 @@ describe('statistics', function(){
 			done();
 		}, 20);
 	})
+	it('should be able to get memory size', function(){
+		var cache = pcache({maxSize: 10, maxAge: 10});
+		for(var i=0; i<10; i++){
+			cache.set(''+i, i);
+		}
+		assert.equal(1020, cache.memory());
+	})
 })
