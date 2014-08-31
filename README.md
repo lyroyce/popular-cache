@@ -66,7 +66,7 @@ Note that the value is not returned directly in proxy mode. Instead, it's return
 
 - **set(key, value)**
 
-	- Stores a value. 
+	- Stores a value. Returns true if succeed. 
 	- Updates the "recently used"-ness of the entry.
 	- Resets the age of the entry.
 
@@ -95,6 +95,10 @@ Note that the value is not returned directly in proxy mode. Instead, it's return
 - **misses()**
 	
 	- Gets the total misses.
+
+- **hitRate()**
+	
+	- Gets the total hit rate (`total hits / (total hits + total misses)`).
 
 - **recent(function(key, value, hits), [limit])**
 
