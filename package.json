@@ -1,6 +1,6 @@
 {
   "name": "popular-cache",
-  "version": "1.1.7",
+  "version": "1.1.8",
   "description": "An in-memory LRU cache with built-in statistics and proxy mode.",
   "keywords": "lru, ttl, cache, memory, storage, statistics, analysis, proxy",
   "main": "index.js",
@@ -10,5 +10,8 @@
   "author": "Yin Li",
   "repository": "git@github.com:lyroyce/popular-cache.git",
   "license": "MIT",
-  "readmeFilename": "README.md"
+  "readmeFilename": "README.md",
+  "dependencies": {
+    "sizeof": "^1.0.0"
+  }
 }

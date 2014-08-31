@@ -2,12 +2,6 @@
 
 An in-memory LRU cache with easy statistics and smart proxy mode.
 
-# Features
-
-	- Adds `memory()` to get the approximate amount of memory used (1.1.7)
-	- Adds `hitRate()` to get the total hit rate (1.1.6)
-	- Adds proxy mode (1.1.1)
-
 # Installation
 
 	npm install popular-cache --save
@@ -90,10 +84,6 @@ Note that the value is not returned directly in proxy mode. Instead, it's return
 	
 	- Gets the current number of entries in the cache.
 
-- **memory()**
-	
-	- Gets the approximate amount of memory used.
-
 - **reset()**
 	
 	- Deletes all entries in the cache.
@@ -109,6 +99,11 @@ Note that the value is not returned directly in proxy mode. Instead, it's return
 - **hitRate()**
 	
 	- Gets the total hit rate (`total hits / (total hits + total misses)`).
+
+- **memory([pretty])**
+	
+	- Gets the approximate amount of memory used.
+	- `pretty`: if sets to `true`, returns the size in pretty format (e.g., 1.064K).
 
 - **recent(function(key, value, hits), [limit])**
 
@@ -140,3 +135,9 @@ Note that the value is not returned directly in proxy mode. Instead, it's return
 
 	- Gets a value for a given key in proxy mode. Note that `function(value)` is required here to receive the value.
 	- `context` is optional and could be anything that is helpful for the proxy function. It will only be passed to the proxy function when cache misses occur. 
+
+# Changes
+
+- Adds `memory()` to get the amount of memory used (1.1.7)
+- Adds `hitRate()` to get the total hit rate (1.1.6)
+- Adds proxy mode (1.1.1)
