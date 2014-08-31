@@ -12,14 +12,15 @@ describe('statistics', function(){
 		for(var i=0; i<10; i++){
 			cache.get('8');
 		}
-		for(var i=0; i<80; i++){
+		for(var i=0; i<70; i++){
 			cache.get('2');
 		}
 		for(var i=0; i<10; i++){
 			cache.get('123');
 		}
-		assert.equal(100, cache.hits());
+		assert.equal(90, cache.hits());
 		assert.equal(10, cache.misses());
+		assert.equal(0.9, cache.hitRate());
 	})
 	it('should be able to iterate recent items', function(){
 		var cache = pcache({maxSize: 10});

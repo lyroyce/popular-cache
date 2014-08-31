@@ -38,18 +38,19 @@ describe('proxy', function(){
 			if(key=='key') callback('value');
 		});
 		cache.set('1', 1);
-		cache.get('1');
-		cache.get('key');
-		cache.get('key');
-		cache.get('2'); // null value will not be cached
-		cache.get('key');
+		cache.get('1');		// hit
+		cache.get('key');	// miss and hit
+		cache.get('key');	// hit
+		cache.get('2'); 	// miss and undefined can not be cached
+		cache.get('2'); 	// miss and undefined can not be cached
+		cache.get('key');	// hit
 		assert.equal(2, cache.size());
-		assert.equal(2, cache.misses());
-		assert.equal(3, cache.hits());
+		assert.equal(3, cache.misses());
+		assert.equal(4, cache.hits());
 
 		// popular
 		var expectedKeys = ['key', '1'],
-			expectedHits = [2, 1];
+			expectedHits = [3, 1];
 		var i = 0;
 		cache.popular(function(key, value, hits){
 			assert.equal(expectedKeys[i], key);
@@ -60,7 +61,7 @@ describe('proxy', function(){
 
 		// recent
 		var expectedKeys = ['key', '1'],
-			expectedHits = [2, 1];
+			expectedHits = [3, 1];
 		var i = 0;
 		cache.recent(function(key, value, hits){
 			assert.equal(expectedKeys[i], key);
@@ -154,17 +155,22 @@ describe('proxy', function(){
 		cache.get('hello', function(value){
 			assert.equal('hello', value);
 			assert.equal(1, cache.size());
+			assert.equal(1, cache.misses());
+			assert.equal(1, cache.hits());
 		}, 'world');
 		// should not set cache
 		cache.get('popular', function(value){
 			assert.equal('popular', value);
 			assert.equal(1, cache.size());
-
+			assert.equal(1, cache.misses());
+			assert.equal(1, cache.hits());
 		}, 'dont cache me');
 		// should set cache
 		cache.get('cache', function(value){
 			assert.equal('cache', value);
 			assert.equal(2, cache.size());
+			assert.equal(2, cache.misses());
+			assert.equal(2, cache.hits());
 			done();
 		}, '');
 	})
